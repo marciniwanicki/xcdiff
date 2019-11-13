@@ -14,12 +14,7 @@
 // limitations under the License.
 //
 
-import Foundation
-
-public protocol Comparator {
-    var tag: ComparatorTag { get }
-
-    func compare(_ first: ProjectDescriptor,
-                 _ second: ProjectDescriptor,
-                 parameters: ComparatorParameters) throws -> [CompareResult]
+enum Either<Left, Right> {
+    case left(Left)
+    case right(Right)
 }

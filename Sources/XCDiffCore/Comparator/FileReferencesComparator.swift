@@ -18,7 +18,7 @@ import Foundation
 import PathKit
 
 final class FileReferencesComparator: Comparator {
-    let tag = "file_references"
+    let tag: ComparatorTag = "file_references"
 
     private let targetsHelper = TargetsHelper()
 

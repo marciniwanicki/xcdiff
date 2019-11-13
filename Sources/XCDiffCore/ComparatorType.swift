@@ -16,48 +16,42 @@
 
 import Foundation
 
-public enum ComparatorType {
-    case fileReferences
-    case targets
-    case headers
-    case sources
-    case resources
-    case configurations
-    case settings
-    case resolvedSettings
-    case sourceTrees
-    case dependencies
-    case custom(Comparator)
+public struct ComparatorType {
+    public static let fileReferences: ComparatorType = .init(FileReferencesComparator())
+    public static let targets: ComparatorType = .init(TargetsComparator())
+    public static let headers: ComparatorType = .init(HeadersComparator())
+    public static let sources: ComparatorType = .init(SourcesComparator())
+    public static let resources: ComparatorType = .init(ResourcesComparator())
+    public static let configurations: ComparatorType = .init(ConfigurationsComparator())
+    public static let settings: ComparatorType = .init(SettingsComparator())
+    public static let resolvedSettings: ComparatorType = .init(ResolvedSettingsComparator(system: DefaultSystem()))
+    public static let sourceTrees: ComparatorType = .init(SourceTreesComparator())
+    public static let dependencies: ComparatorType = .init(DependenciesComparator())
 
-    public var tag: String {
-        return comparator().tag
+    public let tag: ComparatorTag
+    private let comparatorOrFactory: Either<Comparator, () -> Comparator>
+
+    public init(_ factory: @escaping () -> Comparator) {
+        comparatorOrFactory = .right(factory)
+        tag = factory().tag
     }
 
-    // swiftlint:disable cyclomatic_complexity
+    public init(_ comparator: Comparator) {
+        comparatorOrFactory = .left(comparator)
+        tag = comparator.tag
+    }
+
+    @available(*, deprecated, message: "Please use `init(_:)` instead")
+    public static func custom(_ comparator: Comparator) -> ComparatorType {
+        return ComparatorType(comparator)
+    }
+
     func comparator() -> Comparator {
-        switch self {
-        case .fileReferences:
-            return FileReferencesComparator()
-        case .targets:
-            return TargetsComparator()
-        case .headers:
-            return HeadersComparator()
-        case .sources:
-            return SourcesComparator()
-        case .resources:
-            return ResourcesComparator()
-        case .configurations:
-            return ConfigurationsComparator()
-        case .settings:
-            return SettingsComparator()
-        case .resolvedSettings:
-            return ResolvedSettingsComparator(system: DefaultSystem())
-        case .sourceTrees:
-            return SourceTreesComparator()
-        case .dependencies:
-            return DependenciesComparator()
-        case let .custom(comparator):
+        switch comparatorOrFactory {
+        case let .left(comparator):
             return comparator
+        case let .right(factory):
+            return factory()
         }
     }
 }

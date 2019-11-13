@@ -16,10 +16,14 @@
 
 import Foundation
 
-public protocol Comparator {
-    var tag: ComparatorTag { get }
+public struct ComparatorTag: RawRepresentable, ExpressibleByStringLiteral, Equatable, Encodable {
+    public var rawValue: String
 
-    func compare(_ first: ProjectDescriptor,
-                 _ second: ProjectDescriptor,
-                 parameters: ComparatorParameters) throws -> [CompareResult]
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+
+    public init(stringLiteral value: String) {
+        rawValue = value
+    }
 }

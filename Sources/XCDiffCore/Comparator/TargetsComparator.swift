@@ -16,8 +16,8 @@
 
 import Foundation
 
-final class TargetsComparator: Comparator {
-    let tag = "targets"
+struct TargetsComparator: Comparator {
+    let tag: ComparatorTag = "targets"
 
     private let targetsHelper = TargetsHelper()
 

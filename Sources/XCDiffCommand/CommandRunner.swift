@@ -237,7 +237,7 @@ public final class CommandRunner {
 
     private func getTags(from arguments: ArgumentParser.Result) -> ComparatorParameters.Option<String> {
         guard let tags = arguments.get(tagOption) else {
-            return .some(defaultComparators.map { $0.tag })
+            return .some(defaultComparators.map { $0.tag.rawValue })
         }
         return option(from: tags)
     }
@@ -349,7 +349,7 @@ private extension Array where Element == ComparatorType {
 
 private extension ComparatorType {
     var displayName: String {
-        return ComparatorType.displayName(tag)
+        return ComparatorType.displayName(tag.rawValue)
     }
 
     static func displayName(_ tag: String) -> String {
