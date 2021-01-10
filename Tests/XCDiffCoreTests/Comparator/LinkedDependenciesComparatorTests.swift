@@ -205,9 +205,9 @@ final class LinkedDependenciesComparatorTests: XCTestCase {
                                               onlyInFirst: [],
                                               onlyInSecond: [],
                                               differentValues: [
-                                                  CompareResult.DifferentValues(context: "Test1.framework attributes",
-                                                                                first: "optional",
-                                                                                second: "required"),
+                                                  .init(context: "Test1.framework attributes",
+                                                        first: "optional",
+                                                        second: "required"),
                                               ]),
                                 CompareResult(tag: "linked_dependencies",
                                               context: ["\"T2\" target"],
@@ -270,9 +270,9 @@ final class LinkedDependenciesComparatorTests: XCTestCase {
                                               onlyInFirst: [],
                                               onlyInSecond: [],
                                               differentValues: [
-                                                  CompareResult.DifferentValues(context: "Test1.framework attributes",
-                                                                                first: "optional",
-                                                                                second: "required"),
+                                                  .init(context: "Test1.framework attributes",
+                                                        first: "optional",
+                                                        second: "required"),
                                               ])])
     }
 

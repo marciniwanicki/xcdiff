@@ -71,7 +71,7 @@ final class SourceTreesComparator: Comparator {
     }
 
     private func differentValues(first: [String?: [[FileElement]]],
-                                 second: [String?: [[FileElement]]]) -> [CompareResult.DifferentValues] {
+                                 second: [String?: [[FileElement]]]) -> [CompareDetails.DifferentValues] {
         return first.keys
             .compactMap { $0 }
             .filter { second.keys.contains($0) }
@@ -83,9 +83,7 @@ final class SourceTreesComparator: Comparator {
                 let secondValue = second[$0]?
                     .map { string(from: $0) }
                     .joined(separator: ", ") ?? "nil"
-                return CompareResult.DifferentValues(context: $0,
-                                                     first: firstValue,
-                                                     second: secondValue)
+                return .init(context: $0, first: firstValue, second: secondValue)
             }
             .sorted { $0.context < $1.context }
     }

@@ -106,7 +106,8 @@ final class SettingsComparator: Comparator {
         let firstConfigurationOptional = first?.configuration(name: configurationName)
         let secondConfigurationOptional = second?.configuration(name: configurationName)
         guard let firstConfiguration = firstConfigurationOptional,
-            let secondConfiguration = secondConfigurationOptional else {
+            let secondConfiguration = secondConfigurationOptional
+        else {
             if firstConfigurationOptional == nil, secondConfigurationOptional == nil {
                 return [CompareResult(tag: tag, context: context)]
             }
@@ -167,6 +168,6 @@ final class SettingsComparator: Comparator {
         }
 
         // This error shouldn't really happen, that would suggest a broken Xcode project
-        throw ComparatorError.generic("XCBuildConfiguration has an invalid base configuration")
+        throw XCDiffCoreError.generic("XCBuildConfiguration has an invalid base configuration")
     }
 }

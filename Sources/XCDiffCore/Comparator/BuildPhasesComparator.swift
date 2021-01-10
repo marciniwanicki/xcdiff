@@ -44,12 +44,12 @@ final class BuildPhasesComparator: Comparator {
     }
 
     private func differentValues(_ first: [BuildPhaseDescriptor],
-                                 _ second: [BuildPhaseDescriptor]) -> [CompareResult.DifferentValues] {
+                                 _ second: [BuildPhaseDescriptor]) -> [CompareDetails.DifferentValues] {
         return differentOrder(first, second) + differentProperties(first, second)
     }
 
     private func differentOrder(_ first: [BuildPhaseDescriptor],
-                                _ second: [BuildPhaseDescriptor]) -> [CompareResult.DifferentValues] {
+                                _ second: [BuildPhaseDescriptor]) -> [CompareDetails.DifferentValues] {
         let firstIdentifiers = first.map { $0.identifier }
         let secondIdentifiers = second.map { $0.identifier }
         let commonInFirst = self.commonInFirst(firstIdentifiers, secondIdentifiers)
@@ -60,34 +60,34 @@ final class BuildPhasesComparator: Comparator {
         let firstValue = commonFirstIdentifiers.map { $0.description }.joined(separator: ", ")
         let secondValue = commonSecondIdentifiers.map { $0.description }.joined(separator: ", ")
         guard commonFirstIdentifiers == commonSecondIdentifiers else {
-            return [CompareResult.DifferentValues(context: "Different order",
-                                                  first: firstValue,
-                                                  second: secondValue)]
+            return [CompareDetails.DifferentValues(context: "Different order",
+                                                   first: firstValue,
+                                                   second: secondValue)]
         }
         return []
     }
 
     private func differentProperties(_ first: [BuildPhaseDescriptor],
-                                     _ second: [BuildPhaseDescriptor]) -> [CompareResult.DifferentValues] {
+                                     _ second: [BuildPhaseDescriptor]) -> [CompareDetails.DifferentValues] {
         let firstIdentifiers = Set(first.map { $0.identifier })
         let secondIdentifiers = Set(second.map { $0.identifier })
         let firstDescriptorsByIdentifier = Dictionary(grouping: first) { $0.identifier }
         let secondDescriptorsByIdentifier = Dictionary(grouping: second) { $0.identifier }
         let commonIdentifiers = firstIdentifiers.intersection(secondIdentifiers)
-        return commonIdentifiers.flatMap { identifier -> [CompareResult.DifferentValues] in
+        return commonIdentifiers.flatMap { identifier -> [CompareDetails.DifferentValues] in
             let firstDescriptors = firstDescriptorsByIdentifier[identifier]!
             let secondDescriptors = secondDescriptorsByIdentifier[identifier]!
             let count = min(firstDescriptors.count, secondDescriptors.count)
-            let result: [CompareResult.DifferentValues] = (0 ..< count).compactMap {
+            let result: [CompareDetails.DifferentValues] = (0 ..< count).compactMap {
                 let firstDescriptor = firstDescriptors[$0]
                 let secondDescriptor = secondDescriptors[$0]
                 guard firstDescriptor == secondDescriptor else {
                     let identifier = firstDescriptor.identifier.description
                     let firstProperties = firstDescriptor.properties(compareTo: secondDescriptor)
                     let secondProperties = secondDescriptor.properties(compareTo: firstDescriptor)
-                    return CompareResult.DifferentValues(context: "Different properties in \"\(identifier)\"",
-                                                         first: firstProperties,
-                                                         second: secondProperties)
+                    return .init(context: "Different properties in \"\(identifier)\"",
+                                 first: firstProperties,
+                                 second: secondProperties)
                 }
                 return nil
             }

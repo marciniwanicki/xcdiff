@@ -34,7 +34,7 @@ class SettingsHelper {
         let settingValueComparator = SettingValueComparator(firstProjectName: firstProjectName,
                                                             secondProjectName: secondProjectName)
 
-        let valueDifferences: [CompareResult.DifferentValues] = try commonKeys.compactMap { settingName in
+        let valueDifferences: [CompareDetails.DifferentValues] = try commonKeys.compactMap { settingName in
             let firstSetting = first[settingName]
             let secondSettings = second[settingName]
             let firstString = try stringFromBuildSetting(firstSetting)
@@ -76,6 +76,6 @@ class SettingsHelper {
             return buildSettingArray.compactMap { $0 as? String }.joined(separator: " ")
         }
 
-        throw ComparatorError.generic("Cannot convert build setting to string")
+        throw XCDiffCoreError.generic("Cannot convert build setting to string")
     }
 }

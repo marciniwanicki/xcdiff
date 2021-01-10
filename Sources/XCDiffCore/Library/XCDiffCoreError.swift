@@ -17,7 +17,7 @@
 import Foundation
 import PathKit
 
-public enum ComparatorError: LocalizedError {
+public enum XCDiffCoreError: LocalizedError, Equatable {
     case generic(String)
     case cannotFind(type: String, elements: [String])
 
@@ -29,5 +29,12 @@ public enum ComparatorError: LocalizedError {
             let formattedElemenets = elements.map { "\"\($0)\"" }.joined(separator: ", ")
             return "Cannot find \(type)\(elements.count > 1 ? "s" : "") \(formattedElemenets) in both projects"
         }
+    }
+}
+
+extension XCDiffCoreError: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(errorDescription)
     }
 }

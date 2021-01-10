@@ -106,6 +106,14 @@ final class HTMLRenderer: Renderer {
                 background-color: #f1ffe9;
             }
 
+            .error {
+                background-color: #efefef;
+            }
+
+            .error h2 {
+                background-color: #dbdbdb;
+            }
+
             .content {
                 padding-left: 2em;
             }
@@ -142,7 +150,7 @@ final class HTMLRenderer: Renderer {
     func section(_ style: RendererElement.Style, _ content: () -> Void) {
         let cssClass = self.cssClass(from: style)
         switch cssClass {
-        case .success, .warning:
+        case .success, .warning, .error:
             tag("section", cssClass, content)
         case .content:
             tag("div", cssClass, content)
@@ -216,6 +224,7 @@ final class HTMLRenderer: Renderer {
     private enum CSSClass: String {
         case success
         case warning
+        case error
         case content
     }
 
@@ -238,6 +247,8 @@ final class HTMLRenderer: Renderer {
             return .success
         case .warning:
             return .warning
+        case .error:
+            return .error
         }
     }
 }

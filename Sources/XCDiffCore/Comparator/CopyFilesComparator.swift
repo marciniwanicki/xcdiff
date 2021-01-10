@@ -86,20 +86,20 @@ final class CopyFilesComparator: Comparator {
     }
 
     private func compareFiles(_ first: CopyFilesBuildPhaseDescriptor,
-                              _ second: CopyFilesBuildPhaseDescriptor) throws -> [CompareResult.DifferentValues] {
+                              _ second: CopyFilesBuildPhaseDescriptor) throws -> [CompareDetails.DifferentValues] {
         let firstFiles = Dictionary(grouping: first.files, by: { $0.path })
         let secondFiles = Dictionary(grouping: second.files, by: { $0.path })
         let commonPaths = Set(firstFiles.keys).intersection(secondFiles.keys).map { String($0) }
-        return try commonPaths.flatMap { path -> [CompareResult.DifferentValues] in
+        return try commonPaths.flatMap { path -> [CompareDetails.DifferentValues] in
             let firstArray = firstFiles[path]!
             let secondArray = secondFiles[path]!
             guard firstArray.count == 1 else {
-                throw ComparatorError.generic(
+                throw XCDiffCoreError.generic(
                     "\(first.name) Build Phase in first contains \(firstArray.count) references " +
                         "to the same file (path = \(path))")
             }
             guard secondArray.count == 1 else {
-                throw ComparatorError.generic(
+                throw XCDiffCoreError.generic(
                     "\(second.name) Build Phase in second contains \(secondArray.count) references " +
                         "to the same file (path = \(path))")
             }
@@ -150,8 +150,8 @@ private struct CopyFilesBuildPhaseDescriptor: Equatable {
     let dstSubfolderSpec: PBXCopyFilesBuildPhase.SubFolder?
     let files: [FileDescriptor]
 
-    func differentValues(second: CopyFilesBuildPhaseDescriptor) -> [CompareResult.DifferentValues] {
-        var result = [CompareResult.DifferentValues]()
+    func differentValues(second: CopyFilesBuildPhaseDescriptor) -> [CompareDetails.DifferentValues] {
+        var result = [CompareDetails.DifferentValues]()
         if runOnlyForDeploymentPostprocessing != second.runOnlyForDeploymentPostprocessing {
             result.append(.init(context: "runOnlyForDeploymentPostprocessing",
                                 first: "\(runOnlyForDeploymentPostprocessing)",

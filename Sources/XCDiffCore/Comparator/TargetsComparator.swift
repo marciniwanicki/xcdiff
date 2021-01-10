@@ -42,9 +42,9 @@ final class TargetsComparator: Comparator {
         let commonTargetDifferences = commonTargets.filter {
             $0.first.productType != $0.second.productType
         }.map {
-            CompareResult.DifferentValues(context: "\($0.first.name) product type",
-                                          first: $0.first.productType?.rawValue,
-                                          second: $0.second.productType?.rawValue)
+            CompareDetails.DifferentValues(context: "\($0.first.name) product type",
+                                           first: $0.first.productType?.rawValue,
+                                           second: $0.second.productType?.rawValue)
         }
 
         return results(context: ["NATIVE targets"],

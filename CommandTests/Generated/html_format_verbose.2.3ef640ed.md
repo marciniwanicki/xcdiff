@@ -95,6 +95,14 @@
             background-color: #f1ffe9;
         }
 
+        .error {
+            background-color: #efefef;
+        }
+
+        .error h2 {
+            background-color: #dbdbdb;
+        }
+
         .content {
             padding-left: 2em;
         }

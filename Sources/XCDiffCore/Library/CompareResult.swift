@@ -17,7 +17,49 @@
 import Foundation
 import XcodeProj
 
-public struct CompareResult: GenericCompareResult, Equatable {
+public enum CompareResult: GenericCompareResult, Equatable {
+    case details(CompareDetails)
+    case error(CompareError)
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case let .details(details):
+            try container.encode(details)
+        case let .error(error):
+            try container.encode(error)
+        }
+    }
+
+    public init(tag: String,
+                context: [String] = [],
+                description: String? = nil,
+                onlyInFirst: [String] = [],
+                onlyInSecond: [String] = [],
+                differentValues: [CompareDetails.DifferentValues] = []) {
+        self = .details(
+            .init(tag: tag,
+                  context: context,
+                  description: description,
+                  onlyInFirst: onlyInFirst,
+                  onlyInSecond: onlyInSecond,
+                  differentValues: differentValues)
+        )
+    }
+
+    // MARK: - GenericCompareResult
+
+    public func same() -> Bool {
+        switch self {
+        case let .details(details):
+            return details.same()
+        case .error:
+            return false
+        }
+    }
+}
+
+public struct CompareDetails: Encodable, Equatable {
     public struct DifferentValues: Encodable, Equatable {
         public let context: String
         public let first: String
@@ -59,3 +101,32 @@ public struct CompareResult: GenericCompareResult, Equatable {
             && differentValues.isEmpty
     }
 }
+
+public struct CompareError: Encodable, Equatable, LocalizedError {
+    public let tag: String
+    public let context: [String]
+    public let errors: [XCDiffCoreError]
+
+    public init(tag: String,
+                context: [String] = [],
+                errors: [XCDiffCoreError]) {
+        self.tag = tag
+        self.context = context
+        self.errors = errors
+    }
+
+    public var errorDescription: String? {
+        errors
+            .compactMap { $0.errorDescription }
+            .map { "- \($0)" }
+            .joined(separator: "\n")
+    }
+}
+
+protocol CompareIdentifiable {
+    var tag: String { get }
+    var context: [String] { get }
+}
+
+extension CompareDetails: CompareIdentifiable {}
+extension CompareError: CompareIdentifiable {}

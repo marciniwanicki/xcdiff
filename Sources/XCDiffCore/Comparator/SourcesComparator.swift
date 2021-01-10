@@ -60,13 +60,13 @@ final class SourcesComparator: Comparator {
     }
 
     /// Returns compiler flag differences between source pairs
-    private func compilerFlagDifferences(in sourcePairs: [SourcePair]) -> [CompareResult.DifferentValues] {
+    private func compilerFlagDifferences(in sourcePairs: [SourcePair]) -> [CompareDetails.DifferentValues] {
         return sourcePairs.compactMap { sourcePair in
             let (first, second) = sourcePair
             if first.flags != second.flags {
-                return CompareResult.DifferentValues(context: "\(first.path) compiler flags",
-                                                     first: first.flags,
-                                                     second: second.flags)
+                return CompareDetails.DifferentValues(context: "\(first.path) compiler flags",
+                                                      first: first.flags,
+                                                      second: second.flags)
             }
             return nil
         }

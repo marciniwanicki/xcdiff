@@ -34,26 +34,35 @@ final class TextProjectCompareResultRenderer: ProjectCompareResultRenderer {
     // MARK: - Private
 
     private func render(_ result: CompareResult) {
-        guard result.same() == false else {
+        switch result {
+        case let .details(details):
+            render(details: details)
+        case let .error(error):
+            render(error: error)
+        }
+    }
+
+    private func render(details: CompareDetails) {
+        guard details.same() == false else {
             renderer.section(.success) {
-                renderer.header("✅ \(title(from: result))", .h2)
+                renderer.header("✅ \(title(from: details))", .h2)
             }
             return
         }
 
         renderer.section(.warning) {
-            renderer.header("❌ \(title(from: result))", .h2)
+            renderer.header("❌ \(title(from: details))", .h2)
             guard verbose else {
                 return
             }
 
             // render description
-            if let description = result.description {
+            if let description = details.description {
                 renderer.text(description)
             }
 
             // render only in first
-            let onlyInFirst = result.onlyInFirst
+            let onlyInFirst = details.onlyInFirst
             if !onlyInFirst.isEmpty {
                 renderer.header("⚠️  Only in first (\(onlyInFirst.count)):", .h3)
                 renderer.section(.content) {
@@ -66,7 +75,7 @@ final class TextProjectCompareResultRenderer: ProjectCompareResultRenderer {
             }
 
             // render only in second
-            let onlyInSecond = result.onlyInSecond
+            let onlyInSecond = details.onlyInSecond
             if !onlyInSecond.isEmpty {
                 renderer.header("⚠️  Only in second (\(onlyInSecond.count)):", .h3)
                 renderer.section(.content) {
@@ -79,7 +88,7 @@ final class TextProjectCompareResultRenderer: ProjectCompareResultRenderer {
             }
 
             // render different values
-            let differentValues = result.differentValues
+            let differentValues = details.differentValues
             if !differentValues.isEmpty {
                 renderer.header("⚠️  Value mismatch (\(differentValues.count)):", .h3)
                 renderer.section(.content) {
@@ -104,7 +113,29 @@ final class TextProjectCompareResultRenderer: ProjectCompareResultRenderer {
         }
     }
 
-    private func title(from result: CompareResult) -> String {
+    private func render(error: CompareError) {
+        renderer.section(.error) {
+            renderer.header("❓ \(title(from: error))", .h2)
+            guard verbose else {
+                return
+            }
+
+            // render description
+            renderer.header("⚠️  Errors (\(error.errors.count)):", .h3)
+            renderer.section(.content) {
+                renderer.list {
+                    error.errors.forEach {
+                        guard let description = $0.errorDescription else {
+                            return
+                        }
+                        renderer.item(description)
+                    }
+                }
+            }
+        }
+    }
+
+    private func title(from result: CompareIdentifiable) -> String {
         let rootContext = result.tag.uppercased()
         let subContext = !result.context.isEmpty ? " > " + result.context.joined(separator: " > ") : ""
         return rootContext + subContext

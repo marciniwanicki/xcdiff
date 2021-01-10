@@ -20,12 +20,22 @@ import XcodeProj
 
 class PathHelper {
     func fullPath(from fileElement: PBXFileElement?, sourceRoot: Path) throws -> String? {
-        guard let path = try fileElement?.fullPath(sourceRoot: sourceRoot.absolute()) else {
-            return nil
+        do {
+            guard let path = try fileElement?.fullPath(sourceRoot: sourceRoot.absolute()) else {
+                return nil
+            }
+            guard path.isAbsolute else {
+                return path.string
+            }
+            return path.url.relative(to: sourceRoot.absolute().url)
+        } catch let error as CustomStringConvertible {
+            if let fileElement = fileElement, let pathOrName = fileElement.path ?? fileElement.name {
+                throw XCDiffCoreError.generic("""
+                Determining full path to "\(pathOrName)" failed. \(error.description)
+                """)
+            } else {
+                throw XCDiffCoreError.generic(error.description)
+            }
         }
-        guard path.isAbsolute else {
-            return path.string
-        }
-        return path.url.relative(to: sourceRoot.absolute().url)
     }
 }

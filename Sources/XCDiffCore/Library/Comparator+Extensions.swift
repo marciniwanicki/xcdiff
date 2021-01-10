@@ -19,7 +19,7 @@ import Foundation
 extension Comparator {
     func result(context: [String] = [],
                 description: String? = nil,
-                differentValues: [CompareResult.DifferentValues] = []) -> CompareResult {
+                differentValues: [CompareDetails.DifferentValues] = []) -> CompareResult {
         return CompareResult(tag: tag,
                              context: context,
                              description: description,
@@ -32,7 +32,7 @@ extension Comparator {
                 description: String? = nil,
                 onlyInFirst: [String] = [],
                 onlyInSecond: [String] = [],
-                differentValues: [CompareResult.DifferentValues] = []) -> CompareResult {
+                differentValues: [CompareDetails.DifferentValues] = []) -> CompareResult {
         return CompareResult(tag: tag,
                              context: context,
                              description: description,
@@ -45,7 +45,7 @@ extension Comparator {
                 description: String? = nil,
                 first: Set<String> = [],
                 second: Set<String> = [],
-                differentValues: [CompareResult.DifferentValues] = []) -> CompareResult {
+                differentValues: [CompareDetails.DifferentValues] = []) -> CompareResult {
         return result(context: context,
                       description: description,
                       onlyInFirst: first.subtractingAndSorted(second),
@@ -59,7 +59,7 @@ extension Comparator {
                  description: String? = nil,
                  onlyInFirst: [String] = [],
                  onlyInSecond: [String] = [],
-                 differentValues: [CompareResult.DifferentValues] = []) -> [CompareResult] {
+                 differentValues: [CompareDetails.DifferentValues] = []) -> [CompareResult] {
         return [result(context: context,
                        description: description,
                        onlyInFirst: onlyInFirst,
@@ -71,7 +71,7 @@ extension Comparator {
                  description: String? = nil,
                  first: Set<String> = [],
                  second: Set<String> = [],
-                 differentValues: [CompareResult.DifferentValues] = []) -> [CompareResult] {
+                 differentValues: [CompareDetails.DifferentValues] = []) -> [CompareResult] {
         return [result(context: context,
                        description: description,
                        first: first,

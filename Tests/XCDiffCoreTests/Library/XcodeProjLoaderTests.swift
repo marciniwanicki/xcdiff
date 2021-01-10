@@ -46,7 +46,7 @@ final class DefaultXcodeProjLoaderTests: XCTestCase {
 
         // When / Then
         XCTAssertThrowsError(try subject.load(at: path)) { error in
-            guard let error = error as? ComparatorError else {
+            guard let error = error as? XCDiffCoreError else {
                 XCTFail("Expected ComparatorError")
                 return
             }

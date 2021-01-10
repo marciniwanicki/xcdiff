@@ -73,7 +73,7 @@ final class ResolvedSettingsComparator: Comparator {
         do {
             return try parseRawJsonBuildSettings(output: output)
         } catch {
-            throw ComparatorError.generic(
+            throw XCDiffCoreError.generic(
                 "Cannot extract build settings from the project, invalid json output of xcodebuild command " +
                     "(project = \(path), target = \(target), configuration = \(configuration))")
         }

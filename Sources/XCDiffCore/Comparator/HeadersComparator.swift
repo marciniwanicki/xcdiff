@@ -64,12 +64,12 @@ final class HeadersComparator: Comparator {
 
     /// Returns attributes differences between header pairs
     private func attributesDifferences(in headerDescriptorPairs: [HeaderDescriptorPair])
-        -> [CompareResult.DifferentValues] {
+        -> [CompareDetails.DifferentValues] {
         return headerDescriptorPairs
             .filter { $0.attributes != $1.attributes }
-            .map { first, second in CompareResult.DifferentValues(context: "\(first.path) attributes",
-                                                                  first: first.attributes ?? "nil (Project)",
-                                                                  second: second.attributes ?? "nil (Project)") }
+            .map { first, second in CompareDetails.DifferentValues(context: "\(first.path) attributes",
+                                                                   first: first.attributes ?? "nil (Project)",
+                                                                   second: second.attributes ?? "nil (Project)") }
     }
 
     /// Returns a dictionary that maps header descriptors by their path `[path: HeaderDescriptor]`

@@ -33,6 +33,7 @@ public final class CommandRunner {
     private let tagOption: OptionArgument<String>
     private let configurationOption: OptionArgument<String>
     private let verboseOption: OptionArgument<Bool>
+    private let continueAfterErrorOption: OptionArgument<Bool>
     private let differencesOnlyOption: OptionArgument<Bool>
     private let listOption: OptionArgument<Bool>
     private let command: String
@@ -92,6 +93,10 @@ public final class CommandRunner {
                                    shortName: "-v",
                                    kind: Bool.self,
                                    usage: "Verbose mode")
+        continueAfterErrorOption = parser.add(option: "--continue-after-error",
+                                              shortName: "-e",
+                                              kind: Bool.self,
+                                              usage: "Continue after encountering a project error")
         differencesOnlyOption = parser.add(option: "--differences-only",
                                            shortName: "-d",
                                            kind: Bool.self,
@@ -183,13 +188,17 @@ public final class CommandRunner {
         let tags = getTags(from: arguments)
         let configurations = getConfigurations(from: arguments)
         let verbose = getVerbose(from: arguments)
+        let continueAfterError = getContinueAfterError(from: arguments)
         let differencesOnly = getDifferencesOnly(from: arguments)
         let parameters = ComparatorParameters(targets: targets,
                                               configurations: configurations)
 
         // Set up project comparator
         let (path1, path2) = try getPaths(from: arguments)
-        let mode = Mode(format: format, verbose: verbose, differencesOnly: differencesOnly)
+        let mode = Mode(format: format,
+                        verbose: verbose,
+                        differencesOnly: differencesOnly,
+                        continueAfterError: continueAfterError)
         let projectComparator = ProjectComparatorFactory.create(comparators: try allComparators.filter(by: tags),
                                                                 mode: mode)
 
@@ -277,6 +286,13 @@ public final class CommandRunner {
             return false
         }
         return verbose
+    }
+
+    private func getContinueAfterError(from arguments: ArgumentParser.Result) -> Bool {
+        guard let continueAfterError = arguments.get(continueAfterErrorOption) else {
+            return false
+        }
+        return continueAfterError
     }
 
     private func getDifferencesOnly(from arguments: ArgumentParser.Result) -> Bool {

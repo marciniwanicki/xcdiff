@@ -29,7 +29,8 @@ final class DefaultProjectComparatorTests: XCTestCase {
         let subject = DefaultProjectComparator(comparators: [],
                                                resultRenderer: UniversalResultRenderer(format: .console, verbose: true),
                                                xcodeProjLoader: XcodeProjLoaderMock(),
-                                               differencesOnly: false)
+                                               differencesOnly: false,
+                                               continueAfterError: false)
 
         // When
         let result = try subject.compare(firstPath, secondPath, parameters: parametersAll)
@@ -46,7 +47,8 @@ final class DefaultProjectComparatorTests: XCTestCase {
         let subject = DefaultProjectComparator(comparators: comparators,
                                                resultRenderer: UniversalResultRenderer(format: .console, verbose: true),
                                                xcodeProjLoader: XcodeProjLoaderMock(),
-                                               differencesOnly: false)
+                                               differencesOnly: false,
+                                               continueAfterError: false)
 
         // When
         let result = try subject.compare(firstPath, secondPath, parameters: parametersAll)
@@ -64,7 +66,8 @@ final class DefaultProjectComparatorTests: XCTestCase {
         let subject = DefaultProjectComparator(comparators: comparators,
                                                resultRenderer: UniversalResultRenderer(format: .console, verbose: true),
                                                xcodeProjLoader: XcodeProjLoaderMock(),
-                                               differencesOnly: false)
+                                               differencesOnly: false,
+                                               continueAfterError: false)
 
         // When
         let result = try subject.compare(firstPath, secondPath, parameters: parametersAll)
@@ -82,7 +85,8 @@ final class DefaultProjectComparatorTests: XCTestCase {
         let subject = DefaultProjectComparator(comparators: comparators,
                                                resultRenderer: UniversalResultRenderer(format: .console, verbose: true),
                                                xcodeProjLoader: XcodeProjLoaderMock(),
-                                               differencesOnly: true)
+                                               differencesOnly: true,
+                                               continueAfterError: false)
 
         // When
         let result = try subject.compare(firstPath, secondPath, parameters: parametersAll)
@@ -100,7 +104,8 @@ final class DefaultProjectComparatorTests: XCTestCase {
         let subject = DefaultProjectComparator(comparators: comparators,
                                                resultRenderer: UniversalResultRenderer(format: .console, verbose: true),
                                                xcodeProjLoader: XcodeProjLoaderMock(),
-                                               differencesOnly: false)
+                                               differencesOnly: false,
+                                               continueAfterError: false)
 
         // When
         let result = try subject.compare(firstPath, secondPath, parameters: parametersAll)
@@ -125,7 +130,8 @@ final class DefaultProjectComparatorTests: XCTestCase {
         let subject = DefaultProjectComparator(comparators: comparators,
                                                resultRenderer: UniversalResultRenderer(format: .console, verbose: true),
                                                xcodeProjLoader: XcodeProjLoaderMock(),
-                                               differencesOnly: true)
+                                               differencesOnly: true,
+                                               continueAfterError: false)
 
         // When
         let result = try subject.compare(firstPath, secondPath, parameters: parametersAll)
@@ -140,5 +146,27 @@ final class DefaultProjectComparatorTests: XCTestCase {
           • file.txt\n\n
 
         """)
+    }
+
+    func testCompare_whenResultErrorReturnedAndContinueAfterErrorFalse_error() throws {
+        // Given
+        let tag = "Comparator1"
+        let comparator = ComparatorMock(tag: tag) { _, _, _ in
+            [
+                CompareResult(tag: tag, onlyInFirst: ["file.txt"]),
+                .error(.init(tag: tag, errors: [.generic("Test error1"), .generic("Test error2")]))
+            ]
+        }
+        let comparators: [XCDiffCore.Comparator] = [comparator]
+        let subject = DefaultProjectComparator(comparators: comparators,
+                                               resultRenderer: UniversalResultRenderer(format: .console, verbose: true),
+                                               xcodeProjLoader: XcodeProjLoaderMock(),
+                                               differencesOnly: true,
+                                               continueAfterError: false)
+
+        // When / Then
+        XCTAssertThrowsError(try subject.compare(firstPath, secondPath, parameters: parametersAll)) { error in
+            XCTAssertEqual(error.localizedDescription, "Test error1")
+        }
     }
 }

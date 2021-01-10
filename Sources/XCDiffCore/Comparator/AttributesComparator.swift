@@ -44,7 +44,7 @@ final class AttributesComparator: Comparator {
             keyAndValue($0, attributes: second)
         }
 
-        let valueDifferences: [CompareResult.DifferentValues] = commonKeys.compactMap { name in
+        let valueDifferences: [CompareDetails.DifferentValues] = commonKeys.compactMap { name in
             let firstAttribute = first[name]
             let secondAttribute = second[name]
             guard firstAttribute == secondAttribute else {

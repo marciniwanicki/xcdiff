@@ -27,6 +27,7 @@ struct RendererElement {
         case content
         case success
         case warning
+        case error
     }
 }
 

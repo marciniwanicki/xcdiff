@@ -30,11 +30,11 @@ final class DefaultSystem: System {
         task.launch()
         task.waitUntilExit()
         guard task.terminationStatus == 0 else {
-            throw ComparatorError.generic("The command returned with \(task.terminationStatus) code")
+            throw XCDiffCoreError.generic("The command returned with \(task.terminationStatus) code")
         }
         let outdata = outPipe.fileHandleForReading.readDataToEndOfFile()
         guard let string = String(data: outdata, encoding: .utf8) else {
-            throw ComparatorError.generic("Cannot decode the command output")
+            throw XCDiffCoreError.generic("Cannot decode the command output")
         }
         return string
     }

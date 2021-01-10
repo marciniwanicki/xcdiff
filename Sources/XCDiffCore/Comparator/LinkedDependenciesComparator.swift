@@ -81,10 +81,10 @@ final class LinkedDependenciesComparator: Comparator {
     }
 
     private func attributesDifferences(in dependencyDescriptorPairs: [DependencyDescriptorPair])
-        -> [CompareResult.DifferentValues] {
+        -> [CompareDetails.DifferentValues] {
         return dependencyDescriptorPairs
             .filter { $0.type != $1.type }
-            .compactMap { first, second -> CompareResult.DifferentValues? in
+            .compactMap { first, second -> CompareDetails.DifferentValues? in
                 if let key = dependencyKey(dependency: first) {
                     return .init(context: "\(key) attributes",
                                  first: first.type.rawValue,

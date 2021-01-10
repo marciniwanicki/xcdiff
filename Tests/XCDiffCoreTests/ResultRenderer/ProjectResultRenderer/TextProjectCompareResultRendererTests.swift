@@ -280,6 +280,160 @@ final class TextProjectCompareResultRendererTests: XCTestCase {
         """)
     }
 
+    func testRender_whenConsoleRendererAndErrorVerboseFalse() {
+        // Given
+        let renderer = ConsoleRenderer(output: outputBuffer.any())
+        let subject = TextProjectCompareResultRenderer(renderer: renderer, verbose: false)
+        let result = fixtures.projectCompareResult.sample2()
+
+        // When
+        subject.render(result)
+
+        // Then
+        XCTAssertEqual(content, """
+        ❌ TAG1 > Context1 > Context2
+        ❓ TAG2 > Context1 > Context2
+
+        """)
+    }
+
+    func testRender_whenConsoleRendererAndErrorVerboseTrue() {
+        // Given
+        let renderer = ConsoleRenderer(output: outputBuffer.any())
+        let subject = TextProjectCompareResultRenderer(renderer: renderer, verbose: true)
+        let result = fixtures.projectCompareResult.sample2()
+
+        // When
+        subject.render(result)
+
+        // Then
+        XCTAssertEqual(content, """
+        ❌ TAG1 > Context1 > Context2
+
+        ⚠️  Only in first (2):
+
+          • OIF1
+          • OIF2
+
+
+        ⚠️  Only in second (3):
+
+          • OIS1
+          • OIS2
+          • OIS3
+
+
+        ⚠️  Value mismatch (4):
+
+          • DV1
+            ◦ DV1_V1
+            ◦ nil
+
+          • DV2
+            ◦ nil
+            ◦ DV2_V2
+
+          • DV3
+            ◦ DV3_V1
+            ◦ DV3_V2
+
+          • DV4
+            ◦ DV4_V1
+            ◦ DV4_V2
+
+
+        ❓ TAG2 > Context1 > Context2
+
+        ⚠️  Errors (2):
+
+          • Test error1
+          • Test error2
+
+
+        """)
+    }
+
+    func testRender_whenMarkdownRendererAndErrorVerboseFalse() {
+        // Given
+        let renderer = MarkdownRenderer(output: outputBuffer.any())
+        let subject = TextProjectCompareResultRenderer(renderer: renderer, verbose: false)
+        let result = fixtures.projectCompareResult.sample2()
+
+        // When
+        subject.render(result)
+
+        // Then
+        XCTAssertEqual(content, """
+
+        ## ❌ TAG1 > Context1 > Context2
+
+
+        ## ❓ TAG2 > Context1 > Context2
+
+
+        """)
+    }
+
+    func testRender_whenMarkdownRendererAndErrorVerboseTrue() {
+        // Given
+        let renderer = MarkdownRenderer(output: outputBuffer.any())
+        let subject = TextProjectCompareResultRenderer(renderer: renderer, verbose: true)
+        let result = fixtures.projectCompareResult.sample2()
+
+        // When
+        subject.render(result)
+
+        // Then
+        XCTAssertEqual(content, """
+
+        ## ❌ TAG1 > Context1 > Context2
+
+
+        ### ⚠️  Only in first (2):
+
+          - `OIF1`
+          - `OIF2`
+
+
+        ### ⚠️  Only in second (3):
+
+          - `OIS1`
+          - `OIS2`
+          - `OIS3`
+
+
+        ### ⚠️  Value mismatch (4):
+
+          - `DV1`
+            - `DV1_V1`
+            - `nil`
+
+          - `DV2`
+            - `nil`
+            - `DV2_V2`
+
+          - `DV3`
+            - `DV3_V1`
+            - `DV3_V2`
+
+          - `DV4`
+            - `DV4_V1`
+            - `DV4_V2`
+
+
+
+        ## ❓ TAG2 > Context1 > Context2
+
+
+        ### ⚠️  Errors (2):
+
+          - `Test error1`
+          - `Test error2`
+
+
+        """)
+    }
+
     // MARK: - Private
 
     private var content: String {

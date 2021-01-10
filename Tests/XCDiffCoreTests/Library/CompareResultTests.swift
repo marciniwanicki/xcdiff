@@ -101,8 +101,8 @@ final class CompareResultTests: XCTestCase {
 
     private func differentValues(context: String,
                                  first: String? = nil,
-                                 second: String? = nil) -> CompareResult.DifferentValues {
-        return CompareResult.DifferentValues(context: context, first: first, second: second)
+                                 second: String? = nil) -> CompareDetails.DifferentValues {
+        return .init(context: context, first: first, second: second)
     }
 
     private func compareResult(tag: String = "tag",
@@ -110,7 +110,7 @@ final class CompareResultTests: XCTestCase {
                                description: String? = nil,
                                onlyInFirst: [String] = [],
                                onlyInSecond: [String] = [],
-                               differentValues: [CompareResult.DifferentValues] = []) -> CompareResult {
+                               differentValues: [CompareDetails.DifferentValues] = []) -> CompareResult {
         return CompareResult(tag: tag,
                              context: context,
                              description: description,

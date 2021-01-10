@@ -33,7 +33,7 @@ final class JSONProjectCompareResultRenderer: ProjectCompareResultRenderer {
     func render(_ result: ProjectCompareResult) throws {
         let data = try encoder.encode(result)
         guard let string = String(data: data, encoding: .utf8) else {
-            throw ComparatorError.generic("Cannot convert the result into JSON string")
+            throw XCDiffCoreError.generic("Cannot convert the result into JSON string")
         }
         output.write(string)
     }

@@ -207,13 +207,24 @@ final class CommandsRunnerTests: XCTestCase {
             "-p1", fixtures.project.ios_project_1().string,
             "-p2", fixtures.project.ios_project_invalid_paths().string,
         ]
+        let expectedErrors = [
+            "Info.plist",
+            "ProjectFramework.h",
+            "Header1.h",
+            "Header2.h",
+            "Header3.h",
+        ].map {
+            "ERROR: Determining full path to \"\($0)\" failed. " +
+            "Cannot calculate full path for file element \"\($0)\" in source root: " +
+            "\"\(fixtures.project.ios_project_invalid_paths().parent())\"\n"
+        }
 
         // When
         let code = subject.run(with: command)
 
         // Then
         XCTAssertEqual(code, 1)
-        XCTAssertTrue(printer.output.starts(with: "ERROR: Cannot calculate full path for file element"))
+        XCTAssertTrue(expectedErrors.contains(printer.output), "Unexpected output: \(printer.output)")
     }
 
     // MARK: - Private
